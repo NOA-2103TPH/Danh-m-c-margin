@@ -43,10 +43,11 @@ def query_ticker(ticker):
 
 if __name__ == "__main__":
     # Ví dụ
-    #show_top(30, model="Bank")  # 30 mã đầu tiên của bank_model
+    show_top(30, model="Bank")  # 30 mã đầu tiên của bank_model
     #show_top(30, model="Company")  # 30 mã đầu tiên của ct_model
     #show_top(30)              # 30 mã đầu tiên bất kỳ
     # query_ticker("VNM")
-    query_ticker("VNM")
-    query_ticker("VIC")
-    query_ticker("VTP")
+    # query_ticker("STB")
+    # query_ticker("VRE")
+    # query_ticker("VIC")
+    # query_ticker("VTP")
