@@ -21,6 +21,8 @@ def calculate_financial_metrics(cf3, bs_sorted, cf_sorted, is_sorted):
     )
     """Tính toán các chỉ số tài chính"""
     # CF metrics
+    cf2["Lợi nhuận kế toán trước"] = cf_sorted["CFA1"]
+    
     cf2['(Lợi ích)/chi phí thuế TNDN hoãn lại'] = cf_sorted['CFA3'] 
     cf2['Lưu chuyển tiền thuần từ HĐKD'] = cf_sorted['CFA18'] 
     cf2['Cổ tức đã trả'] = cf_sorted['CFA32']
@@ -48,13 +50,14 @@ def calculate_financial_metrics(cf3, bs_sorted, cf_sorted, is_sorted):
     cf2['Nợ phải trả'] = bs_sorted['BSA54'] 
     cf2['Nợ ngắn hạn'] = bs_sorted['BSA55']
     cf2["Vay nợ thuê tài chính ngắn hạn"] = bs_sorted['BSA56']
-    cf2["Phải trả người bán"] = bs_sorted['BSA57']
+    cf2["Phải trả người bán ngắn hạn"] = bs_sorted['BSA57']
     cf2["Người mua trả tiền trước"] = bs_sorted['BSA58']
     cf2["Thuế phải nộp Ngân sách Nhà nước"] = bs_sorted['BSA59']
     cf2["Phải trả người lao động"] = bs_sorted['BSA60']
 
     cf2["Chi phí phải trả"] = bs_sorted['BSA61']
     cf2["Phải trả ngắn hạn khác"] = bs_sorted['BSA64']
+    cf2["Phải trả người bán dài hạn"] = bs_sorted['BSA68']
 
 
     cf2['Vay nợ thuê tài chính dài hạn'] = bs_sorted['BSA71']
@@ -85,6 +88,9 @@ def calculate_financial_metrics(cf3, bs_sorted, cf_sorted, is_sorted):
     return cf2
 
 
+  
+
+
 def calculate_financial(cf2):
     #VCSH
     cf2["VCSH_binh_quan_prev"] = cf2.groupby("Ticker")["Vốn chủ sở hữu"].shift(-1)
@@ -102,6 +108,7 @@ def calculate_financial(cf2):
     cf2["Von_vay_prev"] = cf2.groupby("Ticker")["Vay nợ thuê tài chính ngắn hạn"].shift(-1) + cf2.groupby("Ticker")["Vay nợ thuê tài chính dài hạn"].shift(-1)
     cf2["Von_vay_binh_quan"] = (cf2["Vay nợ thuê tài chính ngắn hạn"] + cf2["Vay nợ thuê tài chính dài hạn"] + cf2["Von_vay_prev"]) / 2
     # Phải trả người bán
+    cf2['Phải trả người bán'] = cf2['Phải trả người bán ngắn hạn'] + cf2['Phải trả người bán dài hạn']
     cf2["Phai_tra_nguoi_ban_prev"] = cf2.groupby("Ticker")["Phải trả người bán"].shift(-1)
     cf2["Phai_tra_nguoi_ban_binh_quan"] = (cf2["Phải trả người bán"] + cf2["Phai_tra_nguoi_ban_prev"]) / 2
     # Phải thu khách hàng ngắn hạn bình quân
@@ -134,6 +141,9 @@ def calculate_financial(cf2):
     cf2["TSCĐ đã và đang đầu tư"] = (cf2["Tài sản cố định"]+cf2["Xây dựng cơ bản dở dang"])
     #cf2["Lợi nhuận trước thuế và lãi vay"] = (cf2["LNST"]+cf2["Chi phí thuế TNDN"]+cf2["Chi phí lãi vay"])
     cf2["Tổng số nợ phải thu người mua"] = (cf2["Phải thu khách hàng ngắn hạn"] + cf2["Phải thu khách hàng dài hạn"])
+    cf2["Nợ phải thu người mua_prev"] = cf2.groupby("Ticker")["Tổng số nợ phải thu người mua"].shift(-1)
+    cf2["Nợ phải thu người mua bình quân"] = (cf2["Tổng số nợ phải thu người mua"] + cf2["Nợ phải thu người mua_prev"]) / 2
+
     cf2["Vốn hoạt động thuần"] = (cf2["TSNH"]-cf2["Nợ ngắn hạn"])
     cf2['Tài sản ngắn hạn sau điều chỉnh'] = cf2['TSNH'] - cf2['Chi phí trả trước ngắn hạn'] 
     # Công thức tài chính
@@ -142,18 +152,18 @@ def calculate_financial(cf2):
     cf2["Tỷ trọng VCSH trong NV"] = cf2["Vốn chủ sở hữu"] / cf2["Tổng nguồn vốn"]
     cf2["Tỷ trọng NPT trong NV"] = cf2["Nợ phải trả"] / cf2["Tổng nguồn vốn"]
     cf2["Hệ số tài trợ"] = cf2["Vốn chủ sở hữu"]/cf2["Tổng tài sản"] # càng cao càng tốt
-
     # Nguồn tài trợ thường xuyên = VCSH + Nợ dài dạn
     cf2["Hệ số tự tài trợ TSDH"] = cf2['Nguồn tài trợ thường xuyên']/cf2["TSDH"] # >=1 là tốt
     cf2["Hệ số tự tài trợ TSCĐ"] = cf2['Nguồn tài trợ thường xuyên']/ cf2["TSCĐ đã và đang đầu tư"] # Nếu Hệ số tự tài trợ TSDH =<1 thì mới tính ct này, ct này >=1 tốt
     cf2["Hệ số khả năng thanh toán của dòng tiền"] = cf2["Lưu chuyển tiền thuần từ HĐKD"]/cf2["No_ngan_han_binh_quan"] # >1 là tốt
     cf2["Hệ số khả năng thanh toán tổng quát"] = cf2["Tổng tài sản"]/cf2["Nợ phải trả"] # >=1 là tốt
+    #cf2["Hệ số khả năng thanh khoản của dòng tiền"] =
     cf2["ROE"] = cf2["LNST"]/cf2["VCSH_binh_quan"] # càng cao càng tốt
     cf2["ROIC"] = cf2["Lợi nhuận trước thuế và lãi vay"]*0.8 / (cf2["VCSH_binh_quan"]+cf2["Von_vay_binh_quan"]) # Vốn vay = vay nợ thuê tài chính ngắn hạn + Vay và nợ tài chính dài hạn + Trái phiếu chuyển đổi
     cf2["ROCE"] = cf2["Lợi nhuận trước thuế và lãi vay"]/(cf2["VCSH_binh_quan"]+cf2["No_dai_han_binh_quan"]) 
     cf2["BEP"] = cf2["Lợi nhuận trước thuế và lãi vay"]/cf2["TTS_binh_quan"]
     cf2["Tốc độ tăng trưởng bền vững"]= cf2["LNST"]* (1- (cf2["Cổ tức đã trả"] / cf2["LNST"])) / cf2["Vốn chủ sở hữu"] # càng cao càng tốt
-    cf2['Tốc độ thay đổi của tổng doanh thu thuần'] = cf2.groupby('Ticker')['Doanh thu thuần'].pct_change(-1) * 100
+    cf2['Tốc độ tăng trưởng doanh thu thuần'] = cf2.groupby('Ticker')['Doanh thu thuần'].pct_change(-1) * 100
     cf2['Tốc độ thay đổi của tổng doanh thu thuần tiêu thụ'] = (cf2['Doanh thu thuần'] / cf2['DTT_prev'] - 1)*100
     cf2["Tốc độ tăng trưởng lợi nhuận"] =cf2.groupby('Ticker')['LNTT'].pct_change(-1) * 100
     cf2['Tốc độ thay đổi của lợi nhuận trước thuế và lãi vay'] = cf2.groupby('Ticker')['Lợi nhuận trước thuế và lãi vay'].pct_change(-1) * 100
@@ -163,6 +173,13 @@ def calculate_financial(cf2):
     cf2["Hệ số nợ so với tài sản"] = cf2["Nợ phải trả"]/cf2["Tổng tài sản"]
 
     #Chương 5 Phân tích tình hình và khả năng thanh toán
+    #Thành phần
+    cf2["Mức tiền hàng bán chịu"] =  cf2['Doanh thu thuần về bán hàng và cung cấp dịch vụ']
+    cf2["Mức tiền hàng bán chịu_prev"] = cf2.groupby("Ticker")["Mức tiền hàng bán chịu"].shift(-1)
+    cf2["Mức tiền hàng bán chịu bình quân"] = (cf2["Mức tiền hàng bán chịu"] + cf2["Mức tiền hàng bán chịu_prev"]) / 2
+    cf2["Mức tiền hàng mua chịu"] = cf2["Giá vốn hàng bán"]
+    cf2["Mức tiền hàng mua chịu_prev"] = cf2.groupby("Ticker")["Mức tiền hàng mua chịu"].shift(-1)
+    cf2["Mức tiền hàng mua chịu bình quân"] = (cf2["Mức tiền hàng mua chịu"]+cf2["Mức tiền hàng mua chịu_prev"]) /2
     # Đánh giá khái quát tình hình bị chiếm dụng hay đi chiếm dụng trong thanh toán
     cf2["Tỷ lệ giữa nợ phải thu so với nợ phải trả"] = cf2['Tổng số nợ phải thu'] / cf2["Nợ phải trả"]
     cf2["Tỷ trọng nợ phải thu chiếm trong TTS"] = cf2['Tổng số nợ phải thu'] / cf2["Tổng tài sản"]
@@ -171,11 +188,11 @@ def calculate_financial(cf2):
     cf2["Tỷ lệ giữa dự phòng nợ phải thu khó đòi so với tổng số nợ phải thu người mua"] = cf2["Dự phòng nợ phải thu khó đòi"] /cf2["Tổng số nợ phải thu người mua"]
     #cf2["Tỷ lệ giữa nợ phải thu quá hạn so với nợ phải trả quá hạn"]
     #cf2["Tỷ lệ giữa nợ đã thu trong kỳ so với tổng số nợ phải thu trong kỳ"]
-    cf2["Tỷ lệ giữa nợ còn phải thu cuối kỳ so với tổng số nợ phải thu trong kỳ"] = cf2['Tổng số nợ phải thu']/ (cf2['Tổng số nợ phải thu'] - cf2['Dự phòng nợ phải thu khó đòi'])
+    cf2["Tỷ lệ giữa nợ còn phải thu cuối kỳ so với tổng số nợ phải thu trong kỳ"] = cf2['Tổng số nợ phải thu']/ (cf2['Tổng số nợ phải thu'] - cf2['Dự phòng phải thu khó đòi ngắn hạn'])
     cf2["Số lần thu hồi tiền hàng"] = cf2['Doanh thu thuần về bán hàng và cung cấp dịch vụ']/(cf2["Phải thu khách hàng ngắn hạn"]+cf2["Phải thu khách hàng dài hạn"])
-    #cf2["Thời gian thu hồi tiền hàng"] = cf2['Phải thu khách hàng ngắn hạn']/
+    cf2["Thời gian thu hồi tiền hàng"] = cf2["Nợ phải thu người mua bình quân"]/ (cf2["Mức tiền hàng bán chịu_prev"]/360)
     cf2["Số lần thanh toán tiền hàng"] = cf2["Giá vốn hàng bán"] / cf2["Phai_tra_nguoi_ban_binh_quan"]
-    #cf2["Thời gian thanh toán tiền hàng"]
+    cf2["Thời gian thanh toán tiền hàng"] = cf2["Phai_tra_nguoi_ban_binh_quan"]/(cf2["Mức tiền hàng mua chịu bình quân"]/360)
     cf2["Hệ số khả năng thanh toán nợ ngắn hạn"] = cf2['Tài sản ngắn hạn sau điều chỉnh']/cf2["Nợ ngắn hạn"]
     cf2["Hệ số khả năng thanh toán nhanh"] = (cf2['Tài sản ngắn hạn sau điều chỉnh'] - cf2["HTK"])/cf2["Nợ ngắn hạn"]
     cf2["Hệ số khả năng thanh toán tức thời"] = cf2["Tiền và các khoản tương đương tiền"]/cf2["Nợ ngắn hạn"]
@@ -190,7 +207,7 @@ def calculate_financial(cf2):
     cf2["Hệ số giữa nợ dài hạn so với VCSH"] = cf2["Nợ dài hạn"]/cf2["Vốn chủ sở hữu"]
     cf2["Hệ số khả năng chi trả lãi vay"] = cf2['Lợi nhuận trước thuế và lãi vay'] / cf2["Chi phí lãi vay"]
     # cf2['Hệ số khả năng chi trả lãi cố định']
-    #cf2["Hệ số giữa nợ phải trả so với giá trị thuần của TSHH"] = cf2["Nợ phải trả"] / (cf2["Vốn chủ sở hữu"]-df["Tài sản vô hình"])
+    cf2["Hệ số giữa nợ phải trả so với giá trị thuần của TSHH"] = cf2["Nợ phải trả"] / (cf2["Vốn chủ sở hữu"]- cf2["Tài sản cố định vô hình"])
 
 
     # Đòn bẩy tài chính theo quan hệ giữa NV(TTS) với VCSH, giữa nợ phải trả với VCSH, Nợ phải trả giữa TTS
@@ -203,16 +220,19 @@ def calculate_financial(cf2):
     cf2['Độ nhạy của đòn bẩy kinh doanh'] = cf2['Tốc độ thay đổi của lợi nhuận trước thuế và lãi vay'] / cf2['Tốc độ thay đổi của tổng doanh thu thuần tiêu thụ']
     cf2['Tốc độ gia tăng lợi nhuận trước thuế và lãi vay'] = cf2['Tốc độ thay đổi của lợi nhuận trước thuế và lãi vay']
     cf2['Độ nhạy của đòn bẩy tài chính'] = cf2['Tốc độ thay đổi của lợi nhuận sau thuế'] / cf2['Tốc độ thay đổi của lợi nhuận trước thuế và lãi vay']
-    cf2['Tốc độ gia tăng lợi nhuận sau thuế'] = cf2['Tốc độ thay đổi của lợi nhuận sau thuế']
+    #cf2['Tốc độ gia tăng lợi nhuận sau thuế'] = cf2['Tốc độ thay đổi của lợi nhuận sau thuế']
     cf2['Độ nhạy của đòn bẩy tổng hợp'] = cf2['Tốc độ thay đổi của lợi nhuận sau thuế'] / cf2['Tốc độ thay đổi của tổng doanh thu thuần tiêu thụ']
-    cf2['Tốc độ tăng trưởng lợi nhuận'] = cf2.groupby('Ticker')['LNTT'].pct_change(-1) * 100
+    #cf2['Tốc độ tăng trưởng lợi nhuận'] = cf2.groupby('Ticker')['LNTT'].pct_change(-1) * 100
+    #cf2["Tỷ trọng nợ phải thu khó đòi so với tổng số nợ phải thu"]
     cf2['Tỷ lệ giữa dự phòng nợ phải thu khó đòi so với tổng số nợ phải thu'] = cf2['Dự phòng nợ phải thu khó đòi'] / cf2['Tổng số nợ phải thu']
+    #cf2["Tỷ trọng nợ phải thu khó đòi so với tổng số tài sản (%)"] = 
     cf2["Số lần luân chuyển TSCĐ"] = cf2["Doanh thu thuần"]/cf2["TSCĐ_binh_quan"]
     cf2["Số lần luân chuyển TSNH"] = cf2["Doanh thu thuần"]/cf2["TSNH_binh_quan"]
     cf2["Số lần luân chuyển HTK"] = cf2["Giá vốn hàng bán"]/cf2["HTK_binh_quan"]
     cf2['Hệ số tài trợ thường xuyên'] = cf2['Nguồn tài trợ thường xuyên']/cf2['Tổng nguồn vốn']
     cf2['Hệ số tài trợ tạm thời'] = cf2['Nợ ngắn hạn']/cf2['Tổng nguồn vốn']
     cf2['Hệ số tự tài trợ TSNH'] = cf2['Nợ ngắn hạn']/cf2['Tài sản ngắn hạn sau điều chỉnh']
+
     # chương 7
     cf2['Mức biến động tăng/giảm doanh thu thuần kỳ phân tích so với kỳ gốc'] = cf2.groupby('Ticker')['Doanh thu thuần'].diff(-1)
     #cf2['Mức biến động tăng/giảm doanh thu thuần kỳ phân tích so với kỳ gốc'] = cf2['Doanh thu thuần'] - cf2['DTT_prev']

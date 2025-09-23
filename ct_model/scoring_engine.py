@@ -1,14 +1,8 @@
 import pandas as pd
+import numpy as np
 
-def score_gt_db_rule(cf2, col):
-    """Xử lý rule đặc biệt 'gt_db' cho 'Hệ số tự tài trợ TSDH'"""
-    return cf2.apply(
-        lambda row: 1 if row[col] >= 1 else (
-            1 if row['Hệ số tự tài trợ TSCĐ'] >= 1 else 0
-        ), axis=1
-    )
 
-def score_by_rule(series, rule):
+def score_by_rule(series, rule, df=None):
     """Áp dụng quy tắc tính điểm cho một series"""
     if rule == 'higher_better':
         return series.diff(-1).apply(lambda x: 1 if x >= 0 else 0)
@@ -26,6 +20,10 @@ def score_by_rule(series, rule):
         return series.apply(lambda x: 1 if x <= 1 else 0)
     elif rule == 'gt_0':
         return series.apply(lambda x: 1 if x > 0 else 0)
+    elif rule == 'special_tsdh_tscd':
+        tsdh = df["Hệ số tự tài trợ TSDH"]
+        tscd = df["Hệ số tự tài trợ TSCĐ"]
+        return np.where((tsdh >= 1) | ((tsdh <= 1) & (tscd >= 1)), 1, 0)
     
     else:
         return None
@@ -34,18 +32,16 @@ def apply_scoring_rules(cf2, column_rule_map):
     """Áp dụng tất cả quy tắc tính điểm"""
     for col, rule in column_rule_map.items():
         if col in cf2.columns:
-            if rule == 'gt_db':
-                # Xử lý rule đặc biệt
-                cf2[f'{col}_score'] = score_gt_db_rule(cf2, col)
-            elif rule in ['higher_better', 'lower_better']:
-                cf2[f'{col}_score'] = (
-                    cf2.groupby('Ticker')[col]
-                      .apply(lambda x: score_by_rule(x, rule))
-                      .reset_index(level=0, drop=True)
+            if rule in ["higher_better", "lower_better"]:
+                cf2[f"{col}_score"] = (
+                    cf2.groupby("Ticker")[col]
+                       .apply(lambda x: score_by_rule(x, rule))
+                       .reset_index(level=0, drop=True)
                 )
+            elif rule == "special_tsdh_tscd":
+                cf2[f"{col}_score"] = score_by_rule(cf2[col], rule, df=cf2)
             else:
-                cf2[f'{col}_score'] = score_by_rule(cf2[col], rule)
-    
+                cf2[f"{col}_score"] = score_by_rule(cf2[col], rule)
     return cf2
 
 def calculate_total_scores(cf2):
