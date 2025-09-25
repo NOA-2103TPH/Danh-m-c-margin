@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 st.set_page_config(
-    page_title="DANH MỤC XẾP HẠNG",
+    page_title="Danh mục xếp hạng",
     page_icon="Mega.jpg",  # file trong cùng folder
     layout="wide"
 )
@@ -30,7 +30,7 @@ if logo_path.exists():
         st.image(str(logo_path), width=720)
 
 st.markdown(
-    "<h1 style='text-align: center;'>Danh mục xếp hạng</h1>",
+    "<h1 style='text-align: center;'>DANH MỤC XẾP HẠNG</h1>",
     unsafe_allow_html=True
 )
 
