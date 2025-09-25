@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 st.set_page_config(
-    page_title="Danh mục xếp hạng",
+    page_title="DANH MỤC XẾP HẠNG",
     page_icon="Mega.jpg",  # file trong cùng folder
     layout="wide"
 )
