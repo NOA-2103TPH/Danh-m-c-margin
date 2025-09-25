@@ -16,7 +16,7 @@ metrics_r1 = [
     "Số lần luân chuyển TSNH",
     "Số lần luân chuyển HTK",
     "Hệ số tài trợ thường xuyên",
-    "Mức biến động tăng/giảm doanh thu thuần kỳ phân tích so với kỳ gốc (%)",
+    #"Mức biến động tăng/giảm doanh thu thuần kỳ phân tích so với kỳ gốc (%)",
     "Tỷ trọng doanh thu thuần về bán hàng và cung cấp dịch vụ trong tổng doanh thu thuần (%)",
     "Tỷ trọng doanh thu HĐTC trong tổng doanh thu thuần (%)",
     "Mức biến động tăng/giảm LNST kỳ phân tích so với kỳ gốc",
@@ -26,7 +26,6 @@ metrics_r1 = [
     "Sức sinh lợi của TSDH sử dụng cho HĐKD",
     "Sức sinh lợi của tài sản sử dụng cho HĐKD",
     "Sức sinh lợi của giá vốn hàng bán tính theo lợi nhuận sau thuế từ HĐKD",
-    "Sức sinh lợi của giá vốn hàng bán",
     "Hệ số chênh lệch giá",
     "Sức sinh lợi của chi phí kinh doanh",
     "Sức sinh lợi của chi phí bán hàng",
@@ -51,31 +50,32 @@ metrics_r2 = [
     "Tỷ lệ giữa dự phòng nợ phải thu khó đòi so với tổng số nợ phải thu người mua",
     "Tỷ lệ giữa nợ còn phải thu cuối kỳ so với tổng số nợ phải thu trong kỳ",
     "Số lần thu hồi tiền hàng",
-    #"Thời gian thu hồi tiền hàng",
-    
+    "Thời gian thu hồi tiền hàng",
+    "Thời gian thanh toán tiền hàng",
     "Đòn bẩy tài chính (theo quan hệ giữa Nợ phải trả với VCSH)",
     "Độ nhạy của đòn bẩy kinh doanh",
     "Độ nhạy của đòn bẩy tài chính",
     "Tỷ trọng nợ phải thu khó đòi so với tổng số nợ phải thu",
-    "Tỷ trọng nợ phải thu khó đòi so với tổng số tài sản (%)",
+    #"Tỷ trọng nợ phải thu khó đòi so với tổng số tài sản (%)",
     "Tỷ lệ giữa dự phòng nợ phải thu khó đòi so với tổng số nợ phải thu",
     "Hệ số tài trợ tạm thời",
-    "Độ nhạy của đòn bẩy tổng hợp"
+    "Độ nhạy của đòn bẩy tổng hợp",
+    "Hệ số giữa nợ phải trả so với giá trị thuần của TSHH"
 ]
 
 
 #>=1 là tốt
 metrics_r3 = [
-    "Hệ số khả năng thanh khoản dòng tiền",
+    #"Hệ số khả năng thanh khoản dòng tiền",
     "Hệ số khả năng thanh toán nợ ngắn hạn",
     "Hệ số khả năng thanh toán nhanh",
     "Hệ số khả năng thanh toán nợ dài hạn",
-    "Hệ số khả năng thanh toán theo thời gian"
+    #"Hệ số khả năng thanh toán theo thời gian"
 ]
 
 #>1 là tốt
 metrics_r4 = [
-    'Hệ số khả năng thanh toán của dòng tiền'
+    'Hệ số khả năng thanh toán của dòng tiền',
     'Hệ số khả năng thanh toán tổng quát',
     'Hệ số khả năng chi trả lãi vay'
 ]
@@ -92,12 +92,12 @@ metrics_r5 = [
 
 # <= 100 là tốt
 metrics_r6 = [
-    'Tỷ lệ giữa nợ phải thu so với nợ phải trả'
+    #'Tỷ lệ giữa nợ phải thu so với nợ phải trả'
 ]
 
 #<=1 là tốt
 metrics_r7 = [
-    'Hệ sô giữa TSDH so với nguồn tài trợ thường xuyên'
+    #'Hệ sô giữa TSDH so với nguồn tài trợ thường xuyên'
 ]
 #>0 là tốt
 metrics_r8 = [
@@ -107,6 +107,7 @@ metrics_r8 = [
 # Trường hợp đặc biệt
 metrics_r9=[
     'Hệ số tự tài trợ TSDH',
+    "Hệ số tự tài trợ TSCĐ"
     
 ]
 # Tạo mapping rules
@@ -119,4 +120,4 @@ for col in metrics_r5: column_rule_map[col] = 'lt_1'
 for col in metrics_r6:  column_rule_map[col] = 'le_100'
 for col in metrics_r7:  column_rule_map[col] = 'le_1'
 for col in metrics_r8: column_rule_map[col] = 'gt_0'
-for col in metrics_r9: column_rule_map[col] = 'gt_db'
+for col in metrics_r9: column_rule_map[col] = 'special_tsdh_tscd'

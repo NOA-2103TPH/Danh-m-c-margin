@@ -6,7 +6,7 @@ from pathlib import Path
 
 st.set_page_config(
     page_title="Danh mục xếp hạng",
-    page_icon="Mega.jpg",  # file trong cùng folder
+    page_icon="Mega.jpg",  
     layout="wide"
 )
 
@@ -23,7 +23,7 @@ df = load_data()
 
 
 # --- Logo + tiêu đề căn giữa ---
-logo_path = Path("Mega2.png")  # file ảnh đặt cùng folder với ui_new.py
+logo_path = Path("Mega2.png") 
 if logo_path.exists():
     col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
     with col3:   # căn giữa ảnh
