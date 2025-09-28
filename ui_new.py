@@ -13,7 +13,7 @@ st.set_page_config(
 
 
 # --- Load dữ liệu ---
-file_path = os.path.join("result", "All_Score_merged4_with_margin_filled_updated.xlsx")
+file_path = os.path.join("result", "summary.xlsx")
 
 @st.cache_data
 def load_data():
