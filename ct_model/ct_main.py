@@ -1,13 +1,13 @@
 import pandas as pd
-from .data_loader import load_data
-from .data_processor import process_data
-from .financial_calculation import (
+from ct_model.data_loader import load_data
+from ct_model.data_processor import process_data
+from ct_model.financial_calculation import (
     calculate_financial_metrics, 
     calculate_financial
 )
-from .metrics_config import column_rule_map
-from .scoring_engine import apply_scoring_rules, calculate_total_scores
-from .analysis_engine import apply_conditions, calculate_final_grades
+from ct_model.metrics_config import column_rule_map
+from ct_model.scoring_engine import apply_scoring_rules, calculate_total_scores
+from ct_model.analysis_engine import apply_conditions, calculate_final_grades
 import os
 
 def main():
@@ -41,9 +41,9 @@ def main():
     RESULT_DIR = os.path.join(PROJECT_ROOT, "result")
     os.makedirs(RESULT_DIR, exist_ok=True)
 
-    filtered_path = os.path.join(RESULT_DIR, "filtered.csv")
-    filtered.to_csv(filtered_path, encoding="utf-8-sig", index=False)
-    print("✅ Filtered CSV saved:", filtered_path)
+    # filtered_path = os.path.join(RESULT_DIR, "filtered.csv")
+    # filtered.to_csv(filtered_path, encoding="utf-8-sig", index=False)
+    # print("✅ Filtered CSV saved:", filtered_path)
     
     # Bước 6: Tính điểm cuối cùng
     BASE_DIR = os.path.dirname(__file__)
