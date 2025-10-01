@@ -12,3 +12,4 @@ showErrorDetails = true
 
 [ui]
 hideTopBar = true
+hideFooter = true
