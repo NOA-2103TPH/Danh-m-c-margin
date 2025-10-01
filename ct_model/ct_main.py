@@ -41,9 +41,9 @@ def main():
     RESULT_DIR = os.path.join(PROJECT_ROOT, "result")
     os.makedirs(RESULT_DIR, exist_ok=True)
 
-    # filtered_path = os.path.join(RESULT_DIR, "filtered.csv")
-    # filtered.to_csv(filtered_path, encoding="utf-8-sig", index=False)
-    # print("✅ Filtered CSV saved:", filtered_path)
+    filtered_path = os.path.join(RESULT_DIR, "filtered.csv")
+    filtered.to_csv(filtered_path, encoding="utf-8-sig", index=False)
+    print("✅ Filtered CSV saved:", filtered_path)
     
     # Bước 6: Tính điểm cuối cùng
     BASE_DIR = os.path.dirname(__file__)

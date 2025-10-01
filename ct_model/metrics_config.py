@@ -39,7 +39,9 @@ metrics_r1 = [
     "Số lần luân chuyển của tài sản (TAT)",
     "Hệ số giữa nợ phải trả so với VCSH",
     "Số lần luân chuyển của tài sản thuần thuộc HĐKD",
-    "Số lần luân chuyển của tài sản sử dụng cho HĐKD"
+    "Số lần luân chuyển của tài sản sử dụng cho HĐKD",
+    "Tỷ suất dòng tiền tự do (%)",
+    "Tỷ trọng dòng tiền lưu chuyển thuần từ HĐKD chiếm trong tổng dòng tiền lưu chuyển thuần (%)"
 ]
 # càng thấp càng tốt
 metrics_r2 = [
@@ -70,14 +72,20 @@ metrics_r3 = [
     "Hệ số khả năng thanh toán nợ ngắn hạn",
     "Hệ số khả năng thanh toán nhanh",
     "Hệ số khả năng thanh toán nợ dài hạn",
-    #"Hệ số khả năng thanh toán theo thời gian"
+    #"Hệ số khả năng thanh toán theo thời gian",
+    "Hệ số khả năng thanh khoản của dòng tiền",
+    "Hệ số khả năng thanh toán nợ của dòng tiền",
+    "Hệ số khả năng trả nợ dài hạn của dòng tiền thuần từ HĐKD"
 ]
 
 #>1 là tốt
 metrics_r4 = [
     'Hệ số khả năng thanh toán của dòng tiền',
     'Hệ số khả năng thanh toán tổng quát',
-    'Hệ số khả năng chi trả lãi vay'
+    'Hệ số khả năng chi trả lãi vay',
+    "Tỷ suất an toàn của dòng tiền (%)",
+    "Hệ số đảm bảo khả năng chi trả lãi vay",
+    "Hệ số khả năng chi trả cho HĐĐT và HĐTC"
 ]
 #<1 là tốt
 metrics_r5 = [

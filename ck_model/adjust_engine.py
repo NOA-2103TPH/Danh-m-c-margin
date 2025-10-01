@@ -69,29 +69,46 @@ def compute_market_points(ct: pd.DataFrame) -> pd.DataFrame:
 
 
 def adjust_grade_logic(g, p):
-    order = {"E": 0, "D": 1, "C": 2, "B": 3, "A": 4}
-    inv = {v: k for k, v in order.items()}
+    """Return adjusted grade based on current grade ``g`` and adjustment score ``p``."""
+    grade = str(g).strip().upper() if pd.notna(g) and str(g).strip() else "F"
+    if grade not in {"A", "B", "C", "D", "E", "F"}:
+        grade = "F"
 
-    def bump(grade, steps):
-        i = order.get(grade, 0)
-        return inv[min(i + steps, 4)]
+    try:
+        points = int(p)
+    except (TypeError, ValueError):
+        points = 0
 
-    g = (str(g) if pd.notna(g) else "E").strip().upper()
-    p = int(p)
-    if g == "A":
-        return "C" if p == 0 else ("B" if p == 1 else "A")
-    if g == "B":
-        return "C" if p <= 1 else "A"
-    if g == "C":
-        return "D" if p == 0 else ("B" if p == 1 else "A")
-    if g in ("D", "E", "F"):
-        if p == 0:
-            return g
-        if p == 1:
-            return bump(g, 1)
-        return bump(g, 2)
-    return g
-
+    if grade == "A":
+        return "B" if points == 0 else "A"
+    if grade == "B":
+        if points == 0:
+            return "C"
+        if points == 1:
+            return "B"
+        return "A"
+    if grade == "C":
+        if points == 0:
+            return "D"
+        if points == 1:
+            return "C"
+        return "B"
+    if grade == "D":
+        if points == 0:
+            return "E"
+        if points == 1:
+            return "D"
+        return "C"
+    if grade == "E":
+        if points == 0:
+            return "F"
+        if points == 1:
+            return "E"
+        return "D"
+    # grade == "F"
+    if points >= 1:
+        return "E"
+    return "F"
 
 def run_adjustment(
     ct: pd.DataFrame,

@@ -3,20 +3,20 @@ import os
 import pandas as pd
 import numpy as np
 
-from .data_loader import load_processed_data
-from .data_processor import merge_data, map_data_to_ct
-from .financial_calculation import (
+from ck_model.data_loader import load_processed_data
+from ck_model.data_processor import merge_data, map_data_to_ct
+from ck_model.financial_calculation import (
     calculate_averages,
     calculate_market_totals,
     calculate_ratios
 )
-from .scoring_engine import (
+from ck_model.scoring_engine import (
     apply_scoring,
     calculate_quarterly_conditions,
     calculate_final_rank,
 )
-from .metrics_config import create_column_rule_map, INPUT_FILES
-from .adjust_engine import run_adjustment
+from ck_model.metrics_config import create_column_rule_map, INPUT_FILES
+from ck_model.adjust_engine import run_adjustment
 
 
 # --- Đường dẫn chuẩn ---
@@ -139,16 +139,32 @@ def main():
         output_excel=None,
     )
 
-    # In nhanh 10 dòng đầu cho quan sát
-    print("Adjusted ranks (top 10):")
-    try:
-        print(df_adj.head(10).to_string(index=False))
-    except Exception:
-        print(df_adj.head(10))
+     # Đọc lại final_rank để làm khung chuẩn
+    final_rank = pd.read_excel(final_path)
 
-    adjust_path = os.path.join(RESULT_DIR, "ck_adjust.xlsx")
-    df_adj.to_excel(adjust_path, index=False)
-    print("   ✓ Saved:", adjust_path)
+    # Ghép 2 bảng theo khóa chung
+    merged = final_rank.merge(
+        df_adj[['Ticker','YearReport','LengthReport','pt_broker',
+                'pt_revenue','pt_assets','market_points','grade_adj']],
+        on='Ticker',
+        how='left'
+    )
+
+    # Lưu file cuối cùng (gồm cả final + adjust)
+    merged_path = os.path.join(RESULT_DIR, "ck_final_adjusted.xlsx")
+    merged.to_excel(merged_path, index=False)
+    print("   ✓ Saved merged file with adjust columns:", merged_path)
+
+    # # In nhanh 10 dòng đầu cho quan sát
+    # print("Adjusted ranks (top 10):")
+    # try:
+    #     print(df_adj.head(10).to_string(index=False))
+    # except Exception:
+    #     print(df_adj.head(10))
+
+    # adjust_path = os.path.join(RESULT_DIR, "ck_adjust.xlsx")
+    # df_adj.to_excel(adjust_path, index=False)
+    # print("   ✓ Saved:", adjust_path)
 
 
 if __name__ == "__main__":

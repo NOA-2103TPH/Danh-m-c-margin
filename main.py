@@ -15,7 +15,7 @@ def run_all():
     bank_score.main()
     bank_output = os.path.join(result_dir, "ScoreRank.xlsx")
     df_bank = pd.read_excel(bank_output, sheet_name="RULES")
-    df_bank["Model"] = "Bank"
+    df_bank["Model"] = "Ngân hàng"
 
     # Ct model
     print("=== Chạy ct_model (ct_main) ===")
@@ -31,23 +31,23 @@ def run_all():
     }
     df_ct = df_ct.rename(columns=rename_map)
     df_ct = df_ct[["Ticker", "Rule1","Rule2","Rule3","Rule4","Rule5","Rules_Sum","Grade"]]
-    df_ct["Model"] = "Company"   # thêm cột đánh dấu
+    df_ct["Model"] = "Phi tài chính"   # thêm cột đánh dấu
 
     # --- CK MODEL ---
     print("=== Chạy ck_model (main_ck) ===")
     main_ck.main()
-    ck_output = os.path.join(result_dir, "ck_final.xlsx")
+    ck_output = os.path.join(result_dir, "ck_final_adjusted.xlsx")
     df_ck = pd.read_excel(ck_output)
     # Giữ cột giống bank/ct
 
     rename_map_ck = {
         "dky1": "Rule1", "dky2": "Rule2", "dkq1": "Rule3",
         "dkq2": "Rule4", "dkq3": "Rule5",
-        "so_luong_1": "Rules_Sum", "grade": "Grade"
+        "so_luong_1": "Rules_Sum", "grade_adj": "Grade"
     }
     df_ck = df_ck.rename(columns=rename_map_ck)
     df_ck = df_ck[["Ticker","Rule1","Rule2","Rule3","Rule4","Rule5","Rules_Sum","Grade"]]
-    df_ck["Model"] = "Securities"
+    df_ck["Model"] = "Chứng khoán"
 
     # --- Gộp 2 kết quả theo chiều dọc ---
     summary = pd.concat([df_bank, df_ct, df_ck], ignore_index=True)
@@ -62,15 +62,14 @@ def run_all():
     }
     summary["Margin"] = summary["Grade"].map(margin_map)
 
-    # Đổi tên Rule1..Rule5 thành tên rõ nghĩa
-    col_rename_final = {
-        "Rule1": "Tăng Trưởng Năm",
-        "Rule2": "Hiệu Suất Vượt Trội",
-        "Rule3": "Tăng Trưởng Liên Tiếp Quý",
-        "Rule4": "Tăng Trưởng Đồng Kỳ Quý",
-        "Rule5": "Ưu Thế Quý Hiện Tại"
-    }
-    summary = summary.rename(columns=col_rename_final)
+    # --- Giữ lại & đổi tên các cột cần thiết ---
+    summary = summary[["Ticker", "Grade", "Margin", "Model"]]
+    summary = summary.rename(columns={
+        "Ticker": "Mã",
+        "Grade": "Điểm",
+        "Margin": "Tỷ lệ cho vay",
+        "Model": "Mô hình"
+    })
 
     # Xuất file summary.xlsx
     summary_path = os.path.join(result_dir, "summary.xlsx")

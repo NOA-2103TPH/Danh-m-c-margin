@@ -42,10 +42,10 @@ tickers = [x.strip().upper() for x in search_input.replace(" ", ",").split(",") 
 
 
 # --- Bộ lọc theo Model ---
-model_filter = st.selectbox("Chọn mô hình:", ["Tất cả", "Bank", "Company", "Securities"])
+model_filter = st.selectbox("Chọn mô hình:", ["Tất cả", "Ngân hàng", "Phi tài chính", "Chứng khoán"])
 
 # --- Bộ lọc theo Grade ---
-grade_filter = st.multiselect("Chọn Grade:", options=sorted(df["Grade"].unique()))
+grade_filter = st.multiselect("Chọn điểm:", options=sorted(df["Điểm"].unique()))
 
 # --- Slider chọn số lượng hiển thị ---
 top_n = st.slider("Số lượng tối đa muốn hiển thị:", 30, 300, 50)
@@ -53,13 +53,13 @@ top_n = st.slider("Số lượng tối đa muốn hiển thị:", 30, 300, 50)
 # Áp dụng filter
 filtered = df.copy()
 if tickers:
-    filtered = filtered[filtered["Ticker"].isin(tickers)]
+    filtered = filtered[filtered["Mã"].isin(tickers)]
     
 if model_filter != "Tất cả":
-    filtered = filtered[filtered["Model"] == model_filter]
+    filtered = filtered[filtered["Mô hình"] == model_filter]
 
 if grade_filter:
-    filtered = filtered[filtered["Grade"].isin(grade_filter)]
+    filtered = filtered[filtered["Điểm"].isin(grade_filter)]
 
 # --- Hiển thị kết quả ---
 st.write(f"Có {len(filtered)} kết quả sau khi lọc")

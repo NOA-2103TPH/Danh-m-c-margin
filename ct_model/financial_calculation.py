@@ -21,11 +21,44 @@ def calculate_financial_metrics(cf3, bs_sorted, cf_sorted, is_sorted):
     )
     """Tính toán các chỉ số tài chính"""
     # CF metrics
-    cf2["Lợi nhuận kế toán trước"] = cf_sorted["CFA1"]
+    cf2["Lợi nhuận kế toán trước thuế"] = cf_sorted["CFA1"] # Mã số 1
+    cf2["Khấu hao và phân bổ"] = cf_sorted["CFA2"] # Mã số 2
+    cf2["Các khoản dự phòng"] = cf_sorted["CFA3"] # Mã số 3
+    cf2["Lãi/lỗ chênh lệch tỷ giá chưa thực hiện"] = cf_sorted["CFA4"] # Mã số 4
+    cf2["Lãi/lỗ từ hoạt động đầu tư"] = cf_sorted["CFA6"] # Mã số 5 (bao gồm 2 mã số 05)
+    cf2["Chi phí lãi vay"] = cf_sorted["CFA7"] # Mã số 6
+    cf2["Lãi/lỗ trước những thay đổi vốn lưu động"] = cf_sorted["CFA9"] # Mã số 8
+    cf2["Tăng/giảm các khoản phải thu"] = cf_sorted["CFA10"] # Mã số 9
+    cf2["Tăng/giảm các khoản phải trả"] =cf_sorted["CFA12"] # Mã số 11
+    cf2["Tăng/giảm chi phí trả trước"] = cf_sorted["CFA13"] # Mã số 12
+    cf2["Chi phí lãi vay đã trả"] = cf_sorted["CFA14"] # Mã số 14
+    cf2["Thuế thu nhập doanh nghiệp đã trả"] = cf_sorted["CFA15"] # Mã số 15
+    cf2["Tiền thu khác từ các hoạt động kinh doanh"] = cf_sorted["CFA16"] # Mã số 16
+    cf2["Tiền chi khác từ các hoạt động kinh doanh"] = cf_sorted["CFA17"] # Mã số 17
+    cf2["Tiền mua tài sản cố định và các tài sản dài hạn khác"] = cf_sorted["CFA19"] # Mã số 21
+    cf2["Tiền thu được từ thanh lý tài sản cố định"] = cf_sorted["CFA20"] # Mã số 22
+    cf2["Tiền thu từ cho vay hoặc thu từ phát hành công cụ nợ"] = cf_sorted["CFA22"] # Mã số 24
+    cf2["Tiền thu từ việc bán các khoản đầu tư vào các doanh nghiệp khác"] = cf_sorted['CFA24'] # Mã số 26
+    cf2["Cổ tức và tiền lãi nhận được"] = cf_sorted["CFA25"] # Mã số 27
+    cf2["Tiền thu từ phát hành cổ phiếu và vốn góp"] = cf_sorted["CFA27"] # Mã số 31
+    cf2["Tiền thu được các khoản đi vay"] = cf_sorted["CFA29"] # Mã số 33
+    cf2['Tiền trả các khoản đi vay'] = cf_sorted["CFA30"] # Mã số 34
+    cf2["Lưu chuyển tiền thuần trong kỳ"] = cf_sorted["CFA35"] # Mã số 50
+    cf2["Tiền và tương đương tiền đầu kỳ"] = cf_sorted["CFA36"] # Mã số 60
+    cf2["Ảnh hưởng của chênh lệch tỷ giá"] = cf_sorted["CFA37"] # Mã số 61 và 62
+    cf2["Tiền và tương đương tiền cuối kỳ"] = cf_sorted["CFA38"] # Mã số 70
+
+
+
     
     cf2['(Lợi ích)/chi phí thuế TNDN hoãn lại'] = cf_sorted['CFA3'] 
-    cf2['Lưu chuyển tiền thuần từ HĐKD'] = cf_sorted['CFA18'] 
-    cf2['Cổ tức đã trả'] = cf_sorted['CFA32']
+    cf2['Lưu chuyển tiền thuần từ HĐKD'] = cf_sorted['CFA18'] # Mã số 20
+    cf2["Biến động hàng tồn kho"] = cf_sorted["CFA11"] # Mã số 10
+    cf2["Chi tiêu vốn"] = cf_sorted["CFA19"]
+    cf2["Lưu chuyển tiền thuần từ HĐĐT"] = cf_sorted["CFA26"] # Mã số 30
+    cf2['Cổ tức đã trả'] = cf_sorted['CFA32'] # Mã số 36
+    cf2["Lưu chuyển tiền thuần từ HĐTC"] = cf_sorted["CFA34"] # Mã số 40
+
 
     #bs
     cf2['TSNH'] = bs_sorted['BSA1']
@@ -74,7 +107,7 @@ def calculate_financial_metrics(cf3, bs_sorted, cf_sorted, is_sorted):
     cf2['Lợi nhuận gộp về bán hàng và cung cấp dịch vụ'] = is_sorted['ISA5']
     
     cf2['Doanh thu hoạt động tài chính'] = is_sorted['ISA6'] 
-    cf2['Chi phí lãi vay'] = - is_sorted['ISA8'] 
+    cf2['Chi phí lãi vay is'] = - is_sorted['ISA8'] 
     cf2["Chi phí bán hàng"] = - is_sorted["ISA9"]
     cf2["Chi phí quản lý doanh nghiệp"] = - is_sorted["ISA10"]
     cf2["Lợi nhuận thuần từ HĐKD"] = is_sorted["ISA11"]
@@ -133,13 +166,13 @@ def calculate_financial(cf2):
 
     #Thành phần công thức
 
-    cf2['Lợi nhuận trước thuế và lãi vay'] = cf2['LNTT'] + cf2['Chi phí lãi vay'] - cf2['Thuế TNDN hoãn lại']
+    cf2['Lợi nhuận trước thuế và lãi vay'] = cf2['LNTT'] + cf2['Chi phí lãi vay is'] - cf2['Thuế TNDN hoãn lại'] #1
     cf2['Dự phòng nợ phải thu khó đòi'] = cf2['Dự phòng phải thu khó đòi ngắn hạn'] + cf2['Dự phòng phải thu khó đòi dài hạn']
     cf2['Tổng số nợ phải thu'] = cf2['Các khoản phải thu ngắn hạn'] + cf2['Các khoản phải thu dài hạn']
     cf2['Nguồn tài trợ thường xuyên'] = cf2["Vốn chủ sở hữu"] + cf2["Nợ dài hạn"]
     cf2['Vốn vay'] = cf2["Vay nợ thuê tài chính ngắn hạn"] + cf2['Vay nợ thuê tài chính dài hạn']
     cf2["TSCĐ đã và đang đầu tư"] = (cf2["Tài sản cố định"]+cf2["Xây dựng cơ bản dở dang"])
-    #cf2["Lợi nhuận trước thuế và lãi vay"] = (cf2["LNST"]+cf2["Chi phí thuế TNDN"]+cf2["Chi phí lãi vay"])
+    #cf2["Lợi nhuận trước thuế và lãi vay"] = (cf2["LNST"]+cf2["Chi phí thuế TNDN"]+cf2["Chi phí lãi vay is"])
     cf2["Tổng số nợ phải thu người mua"] = (cf2["Phải thu khách hàng ngắn hạn"] + cf2["Phải thu khách hàng dài hạn"])
     cf2["Nợ phải thu người mua_prev"] = cf2.groupby("Ticker")["Tổng số nợ phải thu người mua"].shift(-1)
     cf2["Nợ phải thu người mua bình quân"] = (cf2["Tổng số nợ phải thu người mua"] + cf2["Nợ phải thu người mua_prev"]) / 2
@@ -205,7 +238,7 @@ def calculate_financial(cf2):
     cf2["Hệ số giữa vốn hoạt động thuần so với nợ dài hạn"]= cf2["Vốn hoạt động thuần"]/cf2["Nợ dài hạn"]#>0 là tốt
     cf2["Hệ số giữa nợ phải trả so với VCSH"] = cf2["Nợ phải trả"]/cf2["Vốn chủ sở hữu"]
     cf2["Hệ số giữa nợ dài hạn so với VCSH"] = cf2["Nợ dài hạn"]/cf2["Vốn chủ sở hữu"]
-    cf2["Hệ số khả năng chi trả lãi vay"] = cf2['Lợi nhuận trước thuế và lãi vay'] / cf2["Chi phí lãi vay"]
+    cf2["Hệ số khả năng chi trả lãi vay"] = cf2['Lợi nhuận trước thuế và lãi vay'] / cf2["Chi phí lãi vay is"] #1
     # cf2['Hệ số khả năng chi trả lãi cố định']
     cf2["Hệ số giữa nợ phải trả so với giá trị thuần của TSHH"] = cf2["Nợ phải trả"] / (cf2["Vốn chủ sở hữu"]- cf2["Tài sản cố định vô hình"])
 
@@ -299,4 +332,178 @@ def calculate_financial(cf2):
     #cf2["P/E"]
     #cf2["Mức cổ tức chi trả"]
     #cf2["Mức cổ tức so với giá thị trường của cổ phần"]
+
+    #Chương 9
+    # Thành phần
+    cf2["Biến động hàng tồn kho_now"] = cf2.groupby("Ticker")["Biến động hàng tồn kho"].shift(0)
+    cf2["Biến động hàng tồn kho_prev1"] = cf2.groupby("Ticker")["Biến động hàng tồn kho"].shift(-1)
+    cf2["Biến động hàng tồn kho_prev2"] = cf2.groupby("Ticker")["Biến động hàng tồn kho"].shift(-2)
+    cf2["Biến động hàng tồn kho 3 năm liên tiếp"] = cf2["Biến động hàng tồn kho_now"] + cf2["Biến động hàng tồn kho_prev1"] + cf2["Biến động hàng tồn kho_prev2"]
+    cf2["Chi tiêu vốn_now"] = cf2.groupby("Ticker")["Chi tiêu vốn"].shift(0)
+    cf2["Chi tiêu vốn_prev1"] = cf2.groupby("Ticker")["Chi tiêu vốn"].shift(-1)
+    cf2["Chi tiêu vốn_prev2"] = cf2.groupby("Ticker")["Chi tiêu vốn"].shift(-2)
+    cf2["Chi tiêu vốn 3 năm liên tiếp"] = cf2["Chi tiêu vốn_now"] + cf2["Chi tiêu vốn_prev1"] + cf2["Chi tiêu vốn_prev2"]
+    cf2["Cổ tức đã trả_now"] = cf2.groupby("Ticker")["Cổ tức đã trả"].shift(0)
+    cf2["Cổ tức đã trả_prev1"] = cf2.groupby("Ticker")["Cổ tức đã trả"].shift(-1)
+    cf2["Cổ tức đã trả_prev2"] = cf2.groupby("Ticker")["Cổ tức đã trả"].shift(-2)
+    cf2["Cổ tức đã trả 3 năm liên tiếp"] = cf2["Cổ tức đã trả_now"] + cf2["Cổ tức đã trả_prev1"] + cf2["Cổ tức đã trả_prev2"]
+    cf2["Lưu chuyển tiền thuần từ HĐKD_now"] = cf2.groupby("Ticker")["Lưu chuyển tiền thuần từ HĐKD"].shift(0)
+    cf2["Lưu chuyển tiền thuần từ HĐKD_prev1"] = cf2.groupby("Ticker")["Lưu chuyển tiền thuần từ HĐKD"].shift(-1)
+    cf2["Lưu chuyển tiền thuần từ HĐKD_prev2"] = cf2.groupby("Ticker")["Lưu chuyển tiền thuần từ HĐKD"].shift(-2)
+    cf2["Lưu chuyển tiền thuần từ HĐKD 3 năm liên tiếp"] = cf2["Lưu chuyển tiền thuần từ HĐKD_now"] + cf2["Lưu chuyển tiền thuần từ HĐKD_prev1"] + cf2["Lưu chuyển tiền thuần từ HĐKD_prev2"]
+    cf2["Tổng các khoản chi tiêu trong 3 năm liên tiếp"] = cf2["Biến động hàng tồn kho 3 năm liên tiếp"] + cf2["Chi tiêu vốn 3 năm liên tiếp"] + cf2["Cổ tức đã trả 3 năm liên tiếp"]
+    cf2["Dòng tiền dự do trong kỳ"] = cf2["Lưu chuyển tiền thuần từ HĐKD 3 năm liên tiếp"] -  cf2["Chi tiêu vốn 3 năm liên tiếp"] - cf2["Cổ tức đã trả 3 năm liên tiếp"]
+    cf2["Tổng dòng tiền lưu chuyển thuần"] = cf2["Lưu chuyển tiền thuần từ HĐKD"] + cf2["Lưu chuyển tiền thuần từ HĐTC"] + cf2["Lưu chuyển tiền thuần từ HĐĐT"]
+    cf2["Dòng tiền vào của HĐKD"] = (
+
+        cf2["Lợi nhuận kế toán trước thuế"] +
+        cf2["Khấu hao và phân bổ"] +
+        cf2["Các khoản dự phòng"] +
+        cf2["Lãi/lỗ chênh lệch tỷ giá chưa thực hiện"] +
+        cf2["Lãi/lỗ từ hoạt động đầu tư"] +
+        cf2["Chi phí lãi vay"] +
+        cf2["Tăng/giảm các khoản phải thu"] +
+        cf2["Biến động hàng tồn kho"] +
+        cf2["Tăng/giảm các khoản phải trả"] +
+        cf2["Tăng/giảm chi phí trả trước"] +
+        cf2["Tiền thu khác từ các hoạt động kinh doanh"]
+    )
+
+    cf2["Dòng tiền vào của HĐTC"] = (
+        cf2["Tiền thu được từ thanh lý tài sản cố định"]+
+        cf2["Tiền thu từ cho vay hoặc thu từ phát hành công cụ nợ"]+
+        cf2["Tiền thu từ việc bán các khoản đầu tư vào các doanh nghiệp khác"]+
+        cf2["Cổ tức và tiền lãi nhận được"]
+    )
+
+    cf2["Dòng tiền vào của HĐĐT"] = (
+        cf2["Tiền thu từ phát hành cổ phiếu và vốn góp"]+
+        cf2["Tiền thu được các khoản đi vay"]
+
+    )
+    
+    cf2["Dòng tiền vào"] = (
+        cf2["Lợi nhuận kế toán trước thuế"] +
+        cf2["Khấu hao và phân bổ"] +
+        cf2["Các khoản dự phòng"] +
+        cf2["Lãi/lỗ chênh lệch tỷ giá chưa thực hiện"] +
+        cf2["Lãi/lỗ từ hoạt động đầu tư"] +
+        cf2["Chi phí lãi vay"] +
+        cf2["Tăng/giảm các khoản phải thu"] +
+        cf2["Biến động hàng tồn kho"] +
+        cf2["Tăng/giảm các khoản phải trả"] +
+        cf2["Tăng/giảm chi phí trả trước"] +
+        cf2["Tiền thu khác từ các hoạt động kinh doanh"]+
+        cf2["Tiền thu được từ thanh lý tài sản cố định"]+
+        cf2["Tiền thu từ cho vay hoặc thu từ phát hành công cụ nợ"]+
+        cf2["Tiền thu từ việc bán các khoản đầu tư vào các doanh nghiệp khác"]+
+        cf2["Cổ tức và tiền lãi nhận được"] +
+        cf2["Tiền thu từ phát hành cổ phiếu và vốn góp"] +
+        cf2["Tiền thu được các khoản đi vay"]
+        
+    )
+
+    cf2["Dòng tiền ra từ HĐKD"] = cf2["Dòng tiền vào của HĐKD"] - cf2['Lưu chuyển tiền thuần từ HĐKD']
+    cf2["Dòng tiền ra"] = (
+        (cf2["Lợi nhuận kế toán trước thuế"] +
+        cf2["Khấu hao và phân bổ"] +
+        cf2["Các khoản dự phòng"] +
+        cf2["Lãi/lỗ chênh lệch tỷ giá chưa thực hiện"] +
+        cf2["Lãi/lỗ từ hoạt động đầu tư"] +
+        cf2["Chi phí lãi vay"] +
+        cf2["Tăng/giảm các khoản phải thu"] +
+        cf2["Biến động hàng tồn kho"] +
+        cf2["Tăng/giảm các khoản phải trả"] +
+        cf2["Tăng/giảm chi phí trả trước"] +
+        cf2["Tiền thu khác từ các hoạt động kinh doanh"]+
+        cf2["Tiền thu được từ thanh lý tài sản cố định"]+
+        cf2["Tiền thu từ cho vay hoặc thu từ phát hành công cụ nợ"]+
+        cf2["Tiền thu từ việc bán các khoản đầu tư vào các doanh nghiệp khác"]+
+        cf2["Cổ tức và tiền lãi nhận được"] +
+        cf2["Tiền thu từ phát hành cổ phiếu và vốn góp"] +
+        cf2["Tiền thu được các khoản đi vay"]) - 
+        (
+        cf2['Lưu chuyển tiền thuần từ HĐKD']+
+        cf2["Lưu chuyển tiền thuần từ HĐTC"]+
+        cf2["Lưu chuyển tiền thuần từ HĐĐT"]
+        )
+    )
+
+    cf2["Dòng tiền ra từ HĐTC"] = cf2["Dòng tiền vào của HĐTC"] - cf2["Lưu chuyển tiền thuần từ HĐTC"]
+    cf2["Dòng tiền ra từ HĐĐT"] = cf2["Dòng tiền vào của HĐĐT"] - cf2["Lưu chuyển tiền thuần từ HĐĐT"]
+    # Công thức
+    cf2["Tỷ suất an toàn của dòng tiền (%)"] = cf2["Lưu chuyển tiền thuần từ HĐKD 3 năm liên tiếp"] / cf2["Tổng các khoản chi tiêu trong 3 năm liên tiếp"] # đã thêm vào metric
+    cf2["Tỷ suất dòng tiền tự do (%)"] = cf2["Dòng tiền dự do trong kỳ"] / cf2["Lưu chuyển tiền thuần từ HĐKD"] # đã thêm vào metric
+    cf2["Tỷ trọng dòng tiền lưu chuyển thuần từ HĐKD chiếm trong tổng dòng tiền lưu chuyển thuần (%)"] = cf2["Lưu chuyển tiền thuần từ HĐKD"] / cf2["Tổng dòng tiền lưu chuyển thuần"] # đã thêm vào metric
+    #cf2["Tỷ trọng dòng tiền lưu chuyển thuần từ HĐĐT chiếm trong tổng dòng tiền lưu chuyển thuần (%)"] = cf2["Lưu chuyển tiền thuần từ HĐĐT"] / cf2["Tổng dòng tiền lưu chuyển thuần"]
+    #cf2["Tỷ trọng dòng tiền lưu chuyển thuần từ HĐTC chiếm trong tổng dòng tiền lưu chuyển thuần (%)"] = cf2["Lưu chuyển tiền thuần từ HĐTC"] / cf2["Tổng dòng tiền lưu chuyển thuần"]
+    cf2["Tỷ trọng của từng dòng tiền vào từ HĐKD chiếm trong tổng số dòng tiền vào trong kỳ"] = cf2["Dòng tiền vào của HĐKD"]/cf2["Dòng tiền vào"]
+    cf2["Tỷ trọng của từng dòng tiền vào từ HĐTC chiếm trong tổng số dòng tiền vào trong kỳ"] = cf2["Dòng tiền vào của HĐTC"]/cf2["Dòng tiền vào"]
+    cf2["Tỷ trọng của từng dòng tiền vào từ HĐĐT chiếm trong tổng số dòng tiền vào trong kỳ"] = cf2["Dòng tiền vào của HĐĐT"]/cf2["Dòng tiền vào"]
+    cf2["Tỷ trọng của từng dòng tiền ra từ HĐKD chiếm trong tổng số dòng tiền ra trong kỳ"] = cf2["Dòng tiền ra từ HĐKD"]/cf2["Dòng tiền ra"]
+    cf2["Tỷ trọng của từng dòng tiền ra từ HĐTC chiếm trong tổng số dòng tiền ra trong kỳ"] =  cf2["Dòng tiền ra từ HĐTC"]/cf2["Dòng tiền ra"]
+    cf2["Tỷ trọng của từng dòng tiền ra từ HĐĐT chiếm trong tổng số dòng tiền ra trong kỳ"] = cf2["Dòng tiền ra từ HĐĐT"]/cf2["Dòng tiền ra"]
+    cf2["Tỷ lệ giữa tổng dòng tiền ra so với tổng số dòng tiền vào (%)"] = cf2["Dòng tiền ra"]/cf2["Dòng tiền vào"]
+    cf2["Tỷ lệ giữa dòng tiền ra từ HĐKD so với tổng dòng tiền vào (%)"] = cf2["Dòng tiền ra từ HĐKD"]/cf2["Dòng tiền vào"]
+    cf2["Tỷ lệ giữa dòng tiền ra từ HĐTC so với tổng dòng tiền vào (%)"] = cf2["Dòng tiền ra từ HĐTC"]/cf2["Dòng tiền vào"]
+    cf2["Tỷ lệ giữa dòng tiền ra từ HĐĐT so với tổng dòng tiền vào (%)"] = cf2["Dòng tiền ra từ HĐĐT"]/cf2["Dòng tiền vào"]
+    cf2["Tỷ lệ giữa dòng tiền ra để trả nợ dài hạn so với tổng dòng tiền vào (%)"] = cf2['Tiền trả các khoản đi vay']/cf2["Dòng tiền vào"]
+    cf2["Tỷ lệ giữa dòng tiền ra để chi trả cổ tức so với tổng dòng tiền vào từ HĐKD (%)"] =  cf2['Cổ tức đã trả']/cf2["Dòng tiền vào của HĐKD"]
+    # Các nhân tố làm tăng dòng tiền lưu chuyển thuần từ HĐKD
+    cf2["Các nhân tố làm tăng dòng tiền lưu chuyển thuần từ HĐKD trong kỳ"] = (
+        cf2["Lãi/lỗ trước những thay đổi vốn lưu động"]+
+        cf2["Tăng/giảm các khoản phải thu"]+
+        cf2["Biến động hàng tồn kho"]+
+        cf2["Tăng/giảm các khoản phải trả"]+
+        cf2["Tăng/giảm chi phí trả trước"]+
+        cf2["Tiền thu khác từ các hoạt động kinh doanh"]
+    )
+    cf2["Các nhân tố làm giảm dòng tiền lưu chuyển thuần từ HĐKD trong kỳ"] = (
+        cf2["Lãi/lỗ trước những thay đổi vốn lưu động"]+
+        cf2["Tăng/giảm các khoản phải thu"]+
+        cf2["Biến động hàng tồn kho"]+
+        cf2["Tăng/giảm các khoản phải trả"]+
+        cf2["Tăng/giảm chi phí trả trước"]+
+        cf2["Chi phí lãi vay đã trả"]+
+        cf2["Thuế thu nhập doanh nghiệp đã trả"]+
+        cf2["Tiền chi khác từ các hoạt động kinh doanh"]
+
+    )
+    cf2["Lợi nhuận/Lỗ kinh doanh trước những thay đổi của vốn lưu đồng"] = cf2["Lãi/lỗ trước những thay đổi vốn lưu động"]
+    # Tỷ trọng của từng nhân tố làm tăng tiền chiếm trong tổng dòng tiền vào từ HĐKD trong kỳ
+    cf2["Nhân tố làm tăng tiền HĐKD 1"] = cf2["Lãi/lỗ trước những thay đổi vốn lưu động"]/cf2["Dòng tiền vào của HĐKD"]
+    cf2["Nhân tố làm tăng tiền HĐKD 2"] = cf2["Tăng/giảm các khoản phải thu"]/cf2["Dòng tiền vào của HĐKD"]
+    cf2["Nhân tố làm tăng tiền HĐKD 3"] = cf2["Biến động hàng tồn kho"]/cf2["Dòng tiền vào của HĐKD"]
+    cf2["Nhân tố làm tăng tiền HĐKD 4"] = cf2["Tăng/giảm các khoản phải trả"]/cf2["Dòng tiền vào của HĐKD"]
+    cf2["Nhân tố làm tăng tiền HĐKD 5"] = cf2["Tăng/giảm chi phí trả trước"]/cf2["Dòng tiền vào của HĐKD"]
+    cf2["Nhân tố làm tăng tiền HĐKD 6"] = cf2["Tiền thu khác từ các hoạt động kinh doanh"]/cf2["Dòng tiền vào của HĐKD"]
+    # Tỷ trọng của từng nhân tố làm giảm tiền chiếm trong tổng dòng tiền ra từ HĐKD trong kỳ
+    cf2["Nhân tố làm giảm tiền HĐKD 1"] = cf2["Lãi/lỗ trước những thay đổi vốn lưu động"]/cf2["Dòng tiền ra từ HĐKD"]
+    cf2["Nhân tố làm giảm tiền HĐKD 2"] = cf2["Tăng/giảm các khoản phải thu"]/cf2["Dòng tiền ra từ HĐKD"]
+    cf2["Nhân tố làm giảm tiền HĐKD 3"] = cf2["Biến động hàng tồn kho"]/cf2["Dòng tiền ra từ HĐKD"]
+    cf2["Nhân tố làm giảm tiền HĐKD 4"] = cf2["Tăng/giảm các khoản phải trả"]/cf2["Dòng tiền ra từ HĐKD"]
+    cf2["Nhân tố làm giảm tiền HĐKD 5"] = cf2["Tăng/giảm chi phí trả trước"]/cf2["Dòng tiền ra từ HĐKD"]
+    cf2["Nhân tố làm giảm tiền HĐKD 6"] = cf2["Chi phí lãi vay đã trả"]/cf2["Dòng tiền ra từ HĐKD"]
+    cf2["Nhân tố làm giảm tiền HĐKD 7"] = cf2["Thuế thu nhập doanh nghiệp đã trả"]/cf2["Dòng tiền ra từ HĐKD"]
+    cf2["Nhân tố làm giảm tiền HĐKD 8"] = cf2["Tiền chi khác từ các hoạt động kinh doanh"]/cf2["Dòng tiền ra từ HĐKD"]
+    # Tỷ trọng của từng nhân tố làm tăng tiền chiếm trong tổng dòng tiền vào từ HDĐT trong kỳ
+    cf2["Nhân tố làm tăng tiền HĐĐT 1"] = cf2["Tiền thu được từ thanh lý tài sản cố định"]/cf2["Dòng tiền vào của HĐĐT"]
+    cf2["Nhân tố làm tăng tiền HĐĐT 2"] = cf2["Tiền thu từ cho vay hoặc thu từ phát hành công cụ nợ"]/cf2["Dòng tiền vào của HĐĐT"]
+    cf2["Nhân tố làm tăng tiền HĐĐT 3"] = cf2["Tiền thu từ việc bán các khoản đầu tư vào các doanh nghiệp khác"]/cf2["Dòng tiền vào của HĐĐT"]
+    cf2["Nhân tố làm tăng tiền HĐĐT 4"] = cf2["Cổ tức và tiền lãi nhận được"]/cf2["Dòng tiền vào của HĐĐT"]
+    # Tỷ trọng của từng nhân tố làm giảm tiền chiếm trong tổng dòng tiền ra từ HĐĐT trong kỳ
+    cf2["Nhân tố làm giảm tiền HĐĐT 1"] = cf2["Tiền mua tài sản cố định và các tài sản dài hạn khác"]/cf2["Dòng tiền ra từ HĐĐT"]
+    # Tỷ trọng của từng nhân tố làm tăng tiền chiếm trong tồng dòng tiền vào từ HĐTC trong kỳ
+    cf2["Nhân tố làm tăng tiền HĐTC 1"] = cf2["Tiền thu từ phát hành cổ phiếu và vốn góp"]/cf2["Dòng tiền vào của HĐTC"]
+    cf2["Nhân tố làm tăng tiền HĐTC 2"] = cf2["Tiền thu được các khoản đi vay"]/cf2["Dòng tiền vào của HĐTC"]
+    # Tỷ trọng của từng nhân tố làm giảm tiền chiếm trong tổng dòng tiền ra từ HĐTC trong kỳ
+    cf2["Nhân tố làm giảm tiền HĐTC 1"] = cf2["Tiền trả các khoản đi vay"]/cf2["Dòng tiền ra từ HĐTC"]
+    cf2["Nhân tố làm giảm tiền HĐTC 2"] = cf2["Cổ tức đã trả"]/cf2["Dòng tiền ra từ HĐTC"]
+    
+    cf2["Hệ số khả năng thanh khoản của dòng tiền"] = cf2['Lưu chuyển tiền thuần từ HĐKD']/ cf2['Nợ ngắn hạn'] # đã thêm vào metric
+    cf2["Hệ số khả năng thanh toán nợ của dòng tiền"] = cf2["Lưu chuyển tiền thuần từ HĐKD"]/ cf2["Nợ phải trả"] # đã thêm vào metric
+    cf2["Hệ số đảm bảo khả năng chi trả lãi vay"] =(cf2["Lưu chuyển tiền thuần từ HĐKD"] + cf2['Chi phí lãi vay is'])/cf2['Chi phí lãi vay is'] # đã thêm vào metric
+    cf2["Hệ số khả năng trả nợ dài hạn của dòng tiền thuần từ HĐKD"] = cf2["Lưu chuyển tiền thuần từ HĐKD"]/cf2["No_dai_han_binh_quan"]
+    #cf2["Hệ số khả năng chi trả cổ tức"] = cf2["Lưu chuyển tiền thuần từ HĐKD"]/ cf2["Cổ tức phải trả"]
+    cf2["Hệ số khả năng chi trả cho HĐĐT và HĐTC"] = cf2["Lưu chuyển tiền thuần từ HĐKD"]/(cf2["Dòng tiền ra từ HĐĐT"]+cf2["Dòng tiền ra từ HĐTC"]) # đã thêm vào metric
     return cf2
