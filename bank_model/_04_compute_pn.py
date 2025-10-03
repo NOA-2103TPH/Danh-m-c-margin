@@ -1,8 +1,8 @@
 import os
 import numpy as np
 import pandas as pd
-INPUT_XLS  = "data/Ratios.xlsx"
-OUTPUT_XLS = "data/ComputePN.xlsx"   
+INPUT_XLS  = "data/_03_compute_ratios.xlsx"
+OUTPUT_XLS = "data/_04_compute_pn.xlsx"   
 
 METRICS_HIGH = [
     "ROA","ROE","NIM","Lãi suất đầu ra bình quân","Chênh lệch lãi suất",
@@ -88,6 +88,12 @@ ORDER_QUARTER = ["Ticker","YearReport","LengthReport"]
 HIGH_QUARTER  = [c for c in METRICS_HIGH if c in quarter_df.columns]
 LOW_QUARTER   = [c for c in METRICS_LOW  if c in quarter_df.columns]
 THR_QUARTER   = [c for c in THRESHOLDS.keys() if c in quarter_df.columns]
+# BỎ NGƯỠNG CAR Ở PHẦN QUÝ
+EXCLUDED_THRESHOLDS_QUARTER = {"CAR"}
+THR_QUARTER = [
+    c for c in THRESHOLDS.keys()
+    if c in quarter_df.columns and c not in EXCLUDED_THRESHOLDS_QUARTER
+]
 
 quarter_sorted = quarter_df.sort_values(ORDER_QUARTER).reset_index(drop=True)
 quarter_index  = quarter_sorted.set_index(KEYS_QUARTER).index
@@ -129,4 +135,4 @@ with pd.ExcelWriter(OUTPUT_XLS, engine="openpyxl") as writer:
     out_year.to_excel(writer,    sheet_name="YEAR_PN",    index=False)
     out_quarter.to_excel(writer, sheet_name="QUARTER_PN", index=False)
 
-print("DONE ->", OUTPUT_XLS)
+print("Done")

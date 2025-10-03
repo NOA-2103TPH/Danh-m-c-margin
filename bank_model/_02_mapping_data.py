@@ -47,9 +47,9 @@ nt_m = map_columns_unique(note_df, nt_dict)
 total = bs_m.merge(is_m, on=KEY, how="outer").merge(cf_m, on=KEY, how="outer")
 
 # 4) lưu 1 file tổng với 2 sheet: TOTAL (BS+IS+CF) và NOTE (NoteBank)
-out_path = "data/NHDATA_Mapped.xlsx"
+out_path = "data/_02_mapping_data.xlsx"
 with pd.ExcelWriter(out_path, engine="openpyxl") as w:
     total.to_excel(w, sheet_name="TOTAL", index=False)
     nt_m.to_excel(w, sheet_name="NOTE",  index=False)
 
-print("Saved:", out_path, "| TOTAL shape:", total.shape, "| NOTE shape:", nt_m.shape)
+print("Done")

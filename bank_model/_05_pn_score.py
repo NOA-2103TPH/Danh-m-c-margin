@@ -6,7 +6,7 @@ import pandas as pd
 BASE_DIR = os.path.dirname(__file__)
 
 # File input trong thư mục data của bank_model
-INPUT_PATH = os.path.join(BASE_DIR, "data", "ComputePN.xlsx")
+INPUT_PATH = os.path.join(BASE_DIR, "data", "_04_compute_pn.xlsx")
 
 # Thư mục gốc Project Mega (ngoài cùng)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))

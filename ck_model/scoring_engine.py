@@ -8,7 +8,9 @@ from ck_model.metrics_config import SCORING_YEARS
 
 def score_by_rule(series, rule):
     """
-    Quy tắc chấm điểm cho từng metric.
+    Scoring theo yêu cầu (không dùng average/cluster):
+    - higher_better / lower_better: so với kỳ trước (shift(1)) theo thứ tự thời gian
+    - ge_1 / gt_1 / gt_0 / lt_1: rule ngưỡng
     """
     if rule == 'higher_better':
         return (series > series.shift(1)).astype(int)
@@ -18,28 +20,46 @@ def score_by_rule(series, rule):
         return (series >= 1).astype(int)
     elif rule == 'gt_1':
         return (series > 1).astype(int)
+    elif rule == 'gt_0':
+        return (series > 0).astype(int)
     elif rule == 'lt_1':
         return (series < 1).astype(int)
     else:
         return pd.Series([None] * len(series), index=series.index)
 
-
 def apply_scoring(cf2):
     """
-    Áp dụng scoring dựa trên mapping rule từ metrics_config.
+    Áp dụng scoring theo mapping; sắp xếp theo thời gian để shift(-1) là kỳ sau.
+    Sử dụng thứ tự [Ticker, YearReport, LengthReport] nếu có.
     """
     column_rule_map = create_column_rule_map()
 
-    available_metrics = [col for col in column_rule_map if col in cf2.columns]
-    print(f"Applying scoring to {len(available_metrics)} metrics")
+    available_metrics = [col for col in column_rule_map.keys() if col in cf2.columns]
+    print(f"Applying scoring to {len(available_metrics)} available metrics")
 
-    sort_cols = [c for c in ['Ticker', 'YearReport', 'LengthReport'] if c in cf2.columns]
-    cf2 = cf2.sort_values(sort_cols, ascending=[True] * len(sort_cols)).copy()
+    sort_cols = [c for c in ['Ticker','YearReport','LengthReport'] if c in cf2.columns]
+    cf2 = cf2.sort_values(sort_cols, ascending=[True]*len(sort_cols)).copy()
 
     for col, rule in column_rule_map.items():
         if col not in cf2.columns:
             continue
-        if rule in ['higher_better', 'lower_better', 'ge_1', 'gt_1', 'lt_1']:
+        if rule == 'ge_avg':
+            group_cols = [c for c in ['YearReport', 'LengthReport'] if c in cf2.columns]
+            if group_cols:
+                benchmark = cf2.groupby(group_cols)[col].transform('mean')
+            else:
+                benchmark = pd.Series(cf2[col].mean(), index=cf2.index)
+            cf2[f'{col}_score'] = (cf2[col] >= benchmark).astype(int)
+            continue
+        if rule == 'le_avg':
+            group_cols = [c for c in ['YearReport', 'LengthReport'] if c in cf2.columns]
+            if group_cols:
+                benchmark = cf2.groupby(group_cols)[col].transform('mean')
+            else:
+                benchmark = pd.Series(cf2[col].mean(), index=cf2.index)
+            cf2[f'{col}_score'] = (cf2[col] <= benchmark).astype(int)
+            continue
+        if rule in ['higher_better','lower_better','ge_1','gt_1','gt_0','lt_1']:
             cf2[f'{col}_score'] = (
                 cf2.groupby('Ticker', sort=False)[col]
                    .apply(lambda x: score_by_rule(x, rule))
@@ -49,6 +69,7 @@ def apply_scoring(cf2):
             cf2[f'{col}_score'] = score_by_rule(cf2[col], rule)
 
     return cf2
+
 
 
 def calculate_quarterly_conditions(cf2):
